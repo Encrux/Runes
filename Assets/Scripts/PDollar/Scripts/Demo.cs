@@ -117,6 +117,7 @@ public class Demo : MonoBehaviour {
 
 		if (GUI.Button(new Rect(Screen.width - 50, 150, 50, 30), "Add") && points.Count > 0 && newGestureName != "") {
 
+            //TODO: Add relative path
 			string fileName = String.Format("{0}/{1}-{2}.xml", "C:/Users/Boesc/Desktop/", newGestureName, DateTime.Now.ToFileTime());
 
 			#if !UNITY_WEBPLAYER
