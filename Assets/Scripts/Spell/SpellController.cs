@@ -30,6 +30,10 @@ public class SpellController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        TextAsset[] gesturesXml = Resources.LoadAll<TextAsset>("Runes");
+        foreach (TextAsset gestureXml in gesturesXml)
+            trainingSet.Add(GestureIO.ReadGestureFromXML(gestureXml.text));
+
         drawingPlane = gameObject.transform.GetChild(0).gameObject;
         drawingPlane.SetActive(false);
         cam = Camera.main;
@@ -103,11 +107,10 @@ public class SpellController : MonoBehaviour
 
     private void saveGesture()
     {
-        Debug.Log("add gesture " + gestureCount);
         Gesture newGesture = new Gesture(gesturePoints.ToArray(), gestureCount.ToString());
         trainingSet.Add(newGesture);
 
-        string fileName = String.Format("{0}/{1}-{2}.xml", "Assets/Resources", gestureCount.ToString(), DateTime.Now.ToFileTime());
+        string fileName = String.Format("{0}/{1}-{2}.xml", "Assets/Resources/Runes", gestureCount.ToString(), DateTime.Now.ToFileTime());
         GestureIO.WriteGesture(gesturePoints.ToArray(), gestureCount.ToString(), fileName);
 
         ++gestureCount;
