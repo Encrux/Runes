@@ -9,6 +9,7 @@ using System.Linq;
 public class SpellController : MonoBehaviour
 {
     [SerializeField] private Transform gestureOnScreenPrefab;
+    [SerializeField] private GameObject button;
 
     Camera cam;
     private Vector3 mousePos;
@@ -27,6 +28,10 @@ public class SpellController : MonoBehaviour
 
     private int gestureCount;
 
+    private bool clicked = false;
+    private bool wasDownAlready = false;
+    private bool wasUpAlready = false;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -43,20 +48,26 @@ public class SpellController : MonoBehaviour
 
     void Update()
     {
+        clicked = button.GetComponent<SpellButtonController>().GetClicked();
 
-        if (Input.GetKeyDown(KeyCode.Space)) //start new spell
+        if ((clicked == true && wasDownAlready == false) || Input.GetKeyDown(KeyCode.Space)) //start new spell
         {
             drawingPlane.SetActive(true);
             strokeId = -1;
+            wasDownAlready = true;
+            wasUpAlready = false;
         }
 
-        if (Input.GetKeyUp(KeyCode.Space)) //end spell
+        if ((clicked = false && wasUpAlready == false) || Input.GetKeyUp(KeyCode.Space)) //end spell
         {
             recognizeGesture();
+            wasUpAlready = true;
+            wasDownAlready = false;
         }
 
-        if (Input.GetKey(KeyCode.Space)) //cast new spell
+        if (clicked || Input.GetKey(KeyCode.Space)) //cast new spell
         {
+            Debug.Log("asd");
             transform.position = new Vector3(cam.transform.position.x, cam.transform.position.y, 0);
 
             if (Input.GetKeyDown(KeyCode.S)) //save a drawn spell by pressing s before releasing space
