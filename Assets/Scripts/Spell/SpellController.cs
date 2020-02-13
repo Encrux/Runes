@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using System.IO;
 using PDollarGestureRecognizer;
 using System;
@@ -10,6 +11,7 @@ public class SpellController : MonoBehaviour
 {
     [SerializeField] private Transform gestureOnScreenPrefab;
     [SerializeField] private GameObject button;
+    [SerializeField] private GameObject SpellText;
 
     Camera cam;
     private Vector3 mousePos;
@@ -29,8 +31,7 @@ public class SpellController : MonoBehaviour
     private int gestureCount;
 
     private bool clicked = false;
-    private bool wasDownAlready = false;
-    private bool wasUpAlready = false;
+    private int clickState = 0;
 
     // Start is called before the first frame update
     void Start()
@@ -50,46 +51,66 @@ public class SpellController : MonoBehaviour
     {
         clicked = button.GetComponent<SpellButtonController>().GetClicked();
 
-        if ((clicked == true && wasDownAlready == false) || Input.GetKeyDown(KeyCode.Space)) //start new spell
+        if (Input.GetKeyDown(KeyCode.Space)) //start new spell
         {
-            drawingPlane.SetActive(true);
-            strokeId = -1;
-            wasDownAlready = true;
-            wasUpAlready = false;
+            initSpell();
         }
 
-        if ((clicked = false && wasUpAlready == false) || Input.GetKeyUp(KeyCode.Space)) //end spell
+        if ((clicked == false && clickState == 1) || Input.GetKeyUp(KeyCode.Space)) //end spell
         {
             recognizeGesture();
-            wasUpAlready = true;
-            wasDownAlready = false;
         }
 
-        if (clicked || Input.GetKey(KeyCode.Space)) //cast new spell
+        if (clicked)
         {
-            Debug.Log("asd");
-            transform.position = new Vector3(cam.transform.position.x, cam.transform.position.y, 0);
+            handleGestureInput();
+        }
 
+        if (Input.GetKey(KeyCode.Space)) //cast new spell
+        {
             if (Input.GetKeyDown(KeyCode.S)) //save a drawn spell by pressing s before releasing space
             {
                 saveGesture();
             }
 
-            if (Input.GetMouseButtonDown(0)) //start new line
-            {
-                Transform tmpGesture = Instantiate(gestureOnScreenPrefab, transform.position, transform.rotation) as Transform;
-                currentLineRenderer = tmpGesture.GetComponent<LineRenderer>();
-                vertexCount = 0;
-
-                gestureList.Add(currentLineRenderer);
-                ++strokeId;
-            }
-
-            if (Input.GetMouseButton(0)) //draw curret line
-            {
-                drawGesture();
-            }
+            handleGestureInput();
         }
+    }
+
+    public void handleGestureInput()
+    {
+        transform.position = new Vector3(cam.transform.position.x, cam.transform.position.y, 0);
+
+        if (Input.GetMouseButtonDown(0)) //start new line
+        {
+            Transform tmpGesture = Instantiate(gestureOnScreenPrefab, transform.position, transform.rotation) as Transform;
+            currentLineRenderer = tmpGesture.GetComponent<LineRenderer>();
+            vertexCount = 0;
+
+            gestureList.Add(currentLineRenderer);
+            ++strokeId;
+        }
+
+        if (Input.GetMouseButton(0)) //draw curret line
+        {
+            drawGesture();
+        }
+    }
+
+    public void endSpell()
+    {
+        if(clicked)
+        {
+            recognizeGesture();
+        }
+    }
+
+
+    public void initSpell()
+    {
+        drawingPlane.SetActive(true);
+        strokeId = -1;
+        transform.position = new Vector3(cam.transform.position.x, cam.transform.position.y, 0);
     }
 
     //TODO: Find a more elegant way to destroy Line Clones
@@ -102,7 +123,7 @@ public class SpellController : MonoBehaviour
         }
     }
 
-    private void recognizeGesture()
+    public void recognizeGesture()
     {
         drawingPlane.SetActive(false);
         destroyLines();
@@ -112,6 +133,7 @@ public class SpellController : MonoBehaviour
             Gesture candidate = new Gesture(gesturePoints.ToArray());
             Result result = PointCloudRecognizer.Classify(candidate, trainingSet.ToArray());
             Debug.Log("score of gesture " + result.GestureClass + ": " + result.Score);
+            SpellText.GetComponent<Text>().text = result.GestureClass;
         }
         gesturePoints.Clear();
     }

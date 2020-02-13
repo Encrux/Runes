@@ -5,19 +5,20 @@ using UnityEngine;
 public class SpellButtonController : MonoBehaviour
 {
     private bool clicked = false;
+    private int clickState = 0;
 
-    public void OnPointerDown()
+    public void toggleClicked()
     {
-        clicked = true;
-    }
-
-    public void onPointerUp()
-    {
-        clicked = false;
+        clicked = !clicked;
     }
 
     public bool GetClicked()
     {
         return clicked;
+    }
+
+    public int getClickState()
+    {
+        return clickState;
     }
 }
