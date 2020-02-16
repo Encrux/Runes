@@ -133,7 +133,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 178763665711765467}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.5777026, y: -0.110474795, z: -8.492137}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 178763664627222628}
@@ -154,3 +154,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gestureOnScreenPrefab: {fileID: 400000, guid: 7a8f01a8c157cb64fa05f56c2fc436a4,
     type: 3}
+  button: {fileID: 0}
+  SpellText: {fileID: 0}

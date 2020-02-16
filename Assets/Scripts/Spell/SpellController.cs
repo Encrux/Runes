@@ -12,6 +12,7 @@ public class SpellController : MonoBehaviour
     [SerializeField] private Transform gestureOnScreenPrefab;
     [SerializeField] private GameObject button;
     [SerializeField] private GameObject SpellText;
+    [SerializeField] private float spellPlaneOffsetX;
 
     Camera cam;
     private Vector3 mousePos;
@@ -75,11 +76,16 @@ public class SpellController : MonoBehaviour
 
             handleGestureInput();
         }
+
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            Debug.Log(gesturePoints.Count);
+        }
     }
 
     public void handleGestureInput()
     {
-        transform.position = new Vector3(cam.transform.position.x, cam.transform.position.y, 0);
+        transform.position = new Vector3(cam.transform.position.x + spellPlaneOffsetX, cam.transform.position.y, 0);
 
         if (Input.GetMouseButtonDown(0)) //start new line
         {
@@ -110,7 +116,7 @@ public class SpellController : MonoBehaviour
     {
         drawingPlane.SetActive(true);
         strokeId = -1;
-        transform.position = new Vector3(cam.transform.position.x, cam.transform.position.y, 0);
+        transform.position = new Vector3(cam.transform.position.x + spellPlaneOffsetX, cam.transform.position.y, 0);
     }
 
     //TODO: Find a more elegant way to destroy Line Clones
@@ -132,10 +138,20 @@ public class SpellController : MonoBehaviour
         {
             Gesture candidate = new Gesture(gesturePoints.ToArray());
             Result result = PointCloudRecognizer.Classify(candidate, trainingSet.ToArray());
-            Debug.Log("score of gesture " + result.GestureClass + ": " + result.Score);
-            SpellText.GetComponent<Text>().text = result.GestureClass;
+            //Debug.Log("score of gesture " + result.GestureClass + ": " + result.Score);
+
+            SpellText.GetComponent<Text>().text = result.GestureClass + ": " + Math.Round(result.Score, 3).ToString();
+
+            if (result.GestureClass == "explosion")
+            {
+                GameObject explosion = Resources.Load("Explosion") as GameObject;
+                Instantiate(explosion);
+                explosion.GetComponent<Explosion>().Cast();
+            }
+
         }
         gesturePoints.Clear();
+
     }
 
     private void saveGesture()
@@ -165,10 +181,13 @@ public class SpellController : MonoBehaviour
             mousePos = drawBounds.center - dir * distance;
         }
 
-        currentLineRenderer.positionCount = ++vertexCount;
-        currentLineRenderer.SetPosition(vertexCount - 1, mousePos);
+        if (!button.GetComponent<SpellButtonController>().IsMouseHovering())
+        {
+            currentLineRenderer.positionCount = ++vertexCount;
+            currentLineRenderer.SetPosition(vertexCount - 1, mousePos);
+            gesturePoints.Add(new Point(mousePos.x, mousePos.y, strokeId));
+        }
 
-        gesturePoints.Add(new Point(mousePos.x, mousePos.y, strokeId));
     }
 
 }
