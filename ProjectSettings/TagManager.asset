@@ -52,3 +52,6 @@ TagManager:
   - name: Spells
     uniqueID: 2557689809
     locked: 0
+  - name: UI
+    uniqueID: 427835385
+    locked: 0

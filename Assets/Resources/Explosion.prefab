@@ -7,6 +7,16 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 4458572269022085892, guid: f21739105ce27e84a96051de31fd239d,
+        type: 3}
+      propertyPath: castingRange
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4458572269022085892, guid: f21739105ce27e84a96051de31fd239d,
+        type: 3}
+      propertyPath: explosionRadius
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 4458572269022085893, guid: f21739105ce27e84a96051de31fd239d,
         type: 3}
       propertyPath: m_LocalPosition.x

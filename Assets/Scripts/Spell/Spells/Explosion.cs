@@ -10,7 +10,7 @@ public class Explosion : Spell
     [SerializeField] private float explosionRadius;
 
     bool casting = true;
-    bool execute = false;
+    bool executing = false;
 
     private GameObject indicator;
     private Animator explosionAnimation;
@@ -30,7 +30,7 @@ public class Explosion : Spell
     void Update()
     {
        
-        if(Input.GetKeyDown(KeyCode.Space))
+        if(Input.GetKeyDown(KeyCode.Space) && !executing)
         {
             Destroy(gameObject);
         }
@@ -46,8 +46,11 @@ public class Explosion : Spell
         if(Input.GetKeyDown(KeyCode.Mouse0) && casting)
         {
             casting = false;
+            executing = true;
             explosionAnimation.enabled = true;
             explosionAnimation.transform.position = mousePos;
+            explosionAnimation.transform.localScale *= explosionRadius;
+
             explosionAnimation.Play(0);
 
             EndSpell();
